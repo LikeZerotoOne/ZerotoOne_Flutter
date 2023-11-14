@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:pm25/API/APIService.dart';
+import 'package:pm25/TokenStorage.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -29,7 +30,9 @@ class _LoginScreenState extends State<LoginScreen> {
       // 토큰을 로그로 출력
       print('Access Token: $accessToken');
       print('Refresh Token: $refreshToken');
-
+      // TokenStorage를 사용하여 토큰 저장
+      final tokenStorage = TokenStorage();
+      await tokenStorage.saveTokens(accessToken, refreshToken);
 
       // 로그인 성공 처리, 예를 들면 홈 화면으로 이동
       ScaffoldMessenger.of(context).showSnackBar(
