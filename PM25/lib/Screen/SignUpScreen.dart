@@ -14,7 +14,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _passwordController = TextEditingController();
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
-  final _ageController = TextEditingController();
   final _apiService = APIService();
   late UsernameChecker _usernameChecker; // UsernameChecker 인스턴스를 추가합니다.
 
@@ -33,8 +32,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
     final password = _passwordController.text;
     final name = _nameController.text;
     final email = _emailController.text;
-    final sex = _sex;
-    final age = _ageController.text;
     final EmailValidator _emailValidator = EmailValidator();
 
     // 이메일 형식 검증 추가
@@ -51,8 +48,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       password: password,
       name: name,
       email: email,
-      sex: sex,
-      age: age,
+
     );
 
     final response = await _apiService.signUp(user);
@@ -126,37 +122,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   labelText: 'Email',
                 ),
               ),
-              TextField(
-                controller: _ageController,
-                decoration: InputDecoration(
-                  labelText: 'Age',
-                ),
-                keyboardType: TextInputType.number,
-              ),
-              Row(
-                children: [
-                  Radio(
-                    value: 'M',
-                    groupValue: _sex,
-                    onChanged: (value) {
-                      setState(() {
-                        _sex = value as String;
-                      });
-                    },
-                  ),
-                  Text('남'),
-                  Radio(
-                    value: 'W',
-                    groupValue: _sex,
-                    onChanged: (value) {
-                      setState(() {
-                        _sex = value as String;
-                      });
-                    },
-                  ),
-                  Text('여'),
-                ],
-              ),
+
               ElevatedButton(
                 onPressed: _signUp,
                 child: Text('회원가입'),

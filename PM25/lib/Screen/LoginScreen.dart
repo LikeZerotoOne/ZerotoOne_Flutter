@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:pm25/API/APIService.dart';
+import 'package:pm25/Screen/HomeScreen.dart';
 import 'package:pm25/TokenStorage.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -33,11 +34,17 @@ class _LoginScreenState extends State<LoginScreen> {
       // TokenStorage를 사용하여 토큰 저장
       final tokenStorage = TokenStorage();
       await tokenStorage.saveTokens(accessToken, refreshToken);
+      
 
       // 로그인 성공 처리, 예를 들면 홈 화면으로 이동
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('로그인 성공')),
+
       );
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => HomeScreen()),
+      );
+
     } else {
       // 로그인 실패 처리
       ScaffoldMessenger.of(context).showSnackBar(

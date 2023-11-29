@@ -5,18 +5,18 @@ import 'dart:convert';
 import 'dart:ui';
 
 class APIService {
-  final String _baseUrl = 'http://172.30.1.100:8080';
+  final String _baseUrl = 'http://192.9.13.220:8080';
 
   Future<http.Response> signUp(User user) {
     return http.post(
-      Uri.parse('$_baseUrl/members/signUp'),
+      Uri.parse('$_baseUrl/members'),
       headers: {'Content-Type': 'application/json'},
       body: json.encode(user.toJson()), // user.toJson()을 json.encode를 사용하여 인코딩
     );
   }
 
   Future<http.Response> checkUsernameDuplication(String username) async {
-    final url = Uri.parse('$_baseUrl/members/checkUsername/$username');
+    final url = Uri.parse('$_baseUrl/members/$username');
     final response = await http.post(
       url,
       // headers: {'Content-Type': 'application/json'},
@@ -99,4 +99,42 @@ class APIService {
       return false;
     }
   }
+  Future<void> logout() async {
+    final tokenStorage = TokenStorage();
+    await tokenStorage.deleteAllTokens();
+  }
+  Future<int> updateUser(String password, String name, String email) async {
+    final url = Uri.parse('$_baseUrl/api/members');
+    final response = await http.put(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({
+        'password': password,
+        'name': name,
+        'email': email,
+      }),
+    );
+    return response.statusCode;
+  }
+  Future<bool> isAuthenticated() async {
+    final tokenStorage = TokenStorage();
+    var accessToken = await tokenStorage.getAccessToken();
+
+    if (accessToken == null) {
+      return false;
+    }
+
+    var response = await sendRequestWithToken('/verifyToken', accessToken);
+
+    if (response.statusCode == 403) { // 액세스 토큰이 만료된 경우
+      final success = await refreshToken();
+      if (success) {
+        accessToken = await tokenStorage.getAccessToken();
+        response = await sendRequestWithToken('/verifyToken', accessToken);
+      }
+    }
+
+    return response.statusCode == 200;
+  }
+
 }
