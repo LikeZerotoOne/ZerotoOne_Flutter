@@ -5,7 +5,8 @@
 - 이메일 검증 가능(EmailValidator)
 - 로그인 후 accesstocken, refreshtoken 받아오기 가능
 - accesstocken, refreshtoken 로그에 출력 가능
-
+- jwt 토큰 방식으로 로그인, 회원가입 구현 완료
 
 다음주까지 해야할 구현 목록
-- ...
+- jwt 토큰 방식으로 인증하는 것을 모듈화
+- 로그인, 회원가입 화면 꾸미기
