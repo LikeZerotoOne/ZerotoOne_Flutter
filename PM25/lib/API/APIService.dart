@@ -1,11 +1,15 @@
 import 'package:http/http.dart' as http;
-import 'package:pm25/TokenStorage.dart';
+import 'package:pm25/Storage/StorageUtil.dart';
+import 'package:pm25/Storage/TokenStorage.dart';
 import '../Model/UserModel.dart';
 import 'dart:convert';
 import 'dart:ui';
+import 'package:jwt_decode/jwt_decode.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 class APIService {
-  final String _baseUrl = 'http://192.9.13.220:8080';
+  final String _baseUrl = 'http://172.16.238.171:8080';
 
   Future<http.Response> signUp(User user) {
     return http.post(
@@ -27,12 +31,31 @@ class APIService {
 
   // APIService.dart
 
-  Future<http.Response> login(String username, String password) {
-    return http.post(
+  Future<http.Response> login(String username, String password) async {
+    final response = await http.post(
       Uri.parse('$_baseUrl/login'),
       headers: {'Content-Type': 'application/json'},
       body: json.encode({'username': username, 'password': password}),
     );
+
+    if (response.statusCode == 200) {
+      final responseData = json.decode(response.body);
+      final accessToken = responseData['accessToken'];
+
+      // JWT Parsing 및 memberId 추출
+      Map<String, dynamic> decodedToken = Jwt.parseJwt(accessToken);
+      int memberId = int.tryParse(decodedToken['memberId'].toString()) ?? 0;
+
+      // memberId 저장
+      await saveMemberId(memberId);
+    } else {
+      // 로그인 실패 처리...
+    }
+    return response;
+  }
+  Future<void> saveMemberId(int memberId) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('memberId', memberId);
   }
 
   Future<http.Response> getWithToken(String endpoint) async {
@@ -103,13 +126,19 @@ class APIService {
     final tokenStorage = TokenStorage();
     await tokenStorage.deleteAllTokens();
   }
-  Future<int> updateUser(String password, String name, String email) async {
-    final url = Uri.parse('$_baseUrl/api/members');
+  Future<int> updateUser(String name, String email) async {
+    final tokenStorage = TokenStorage();
+    final accessToken = await tokenStorage.getAccessToken();
+    final memberId = await StorageUtil.getMemberId();
+    final url = Uri.parse('$_baseUrl/api/members/$memberId');
+
     final response = await http.put(
       url,
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
       body: json.encode({
-        'password': password,
         'name': name,
         'email': email,
       }),
@@ -124,17 +153,43 @@ class APIService {
       return false;
     }
 
-    var response = await sendRequestWithToken('/verifyToken', accessToken);
+    var response = await sendRequestWithToken('api/sample/doA', accessToken);
 
     if (response.statusCode == 403) { // 액세스 토큰이 만료된 경우
       final success = await refreshToken();
       if (success) {
         accessToken = await tokenStorage.getAccessToken();
-        response = await sendRequestWithToken('/verifyToken', accessToken);
+        response = await sendRequestWithToken('api/sample/doA', accessToken);
       }
     }
 
     return response.statusCode == 200;
+  }
+  Future<http.Response> getMyPageData(int memberId) async {
+    final tokenStorage = TokenStorage();
+    final accessToken = await tokenStorage.getAccessToken();
+    final url = Uri.parse('$_baseUrl/api/members/$memberId');
+
+    return http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+  }
+  Future<http.Response> getUserDetails(int memberId) async {
+    final tokenStorage = TokenStorage();
+    final accessToken = await tokenStorage.getAccessToken();
+    final url = Uri.parse('$_baseUrl/api/members/$memberId');
+
+    return http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
   }
 
 }

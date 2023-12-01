@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:pm25/CommonBottomNavigationBar.dart';
+import 'package:pm25/NavigationBar/CommonBottomNavigationBar.dart';
 
 class StudyLogPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Calend")),
-      body: Center(child: Text("Caar Page")),
+      appBar: AppBar(title: Text("study log")),
+      body: Center(child: Text("study log")),
       bottomNavigationBar: CommonBottomNavigationBar(selectedIndex: 0),
     );
   }

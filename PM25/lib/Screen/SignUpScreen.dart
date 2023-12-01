@@ -17,7 +17,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _apiService = APIService();
   late UsernameChecker _usernameChecker; // UsernameChecker 인스턴스를 추가합니다.
 
-  String _sex = '남'; // 라디오 버튼의 상태를 관리하는 변수
 
   @override
   void initState() {

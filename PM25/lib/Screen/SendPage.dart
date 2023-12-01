@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pm25/CommonBottomNavigationBar.dart';
+import 'package:pm25/NavigationBar/CommonBottomNavigationBar.dart';
 
 class SendPage extends StatelessWidget {
   @override

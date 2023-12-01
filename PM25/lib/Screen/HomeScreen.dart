@@ -1,6 +1,6 @@
   import 'package:flutter/material.dart';
   import 'package:pm25/API/APIService.dart';
-import 'package:pm25/CommonBottomNavigationBar.dart';
+import 'package:pm25/NavigationBar/CommonBottomNavigationBar.dart';
   import 'package:pm25/Screen/LoginScreen.dart';
   import 'package:pm25/Screen/SignUpScreen.dart';
 
@@ -78,15 +78,7 @@ import 'package:pm25/CommonBottomNavigationBar.dart';
                 child: Text('토큰 인증 테스트'),
                 onPressed: () => _testToken(context),
               ),
-              ElevatedButton(
-                onPressed: () async {
-                  await _apiService.logout();
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (context) => HomeScreen()),
-                  );
-                },
-                child: Text('로그아웃'),
-              ),
+
             ],
 
           ),
