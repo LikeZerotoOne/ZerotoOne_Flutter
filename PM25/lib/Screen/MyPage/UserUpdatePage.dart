@@ -6,6 +6,7 @@ import 'package:pm25/NavigationBar/CommonBottomNavigationBar.dart';
 import 'package:pm25/Screen/LoginScreen.dart';
 import 'package:pm25/Screen/MyPage/MyPage.dart';
 import 'package:pm25/Storage/StorageUtil.dart';
+import 'package:pm25/Validation/EmailValidator.dart';
 
 class UserUpdatePage extends StatefulWidget {
   @override
@@ -66,11 +67,19 @@ class _UserUpdatePageState extends State<UserUpdatePage> {
             TextFormField(
               decoration: InputDecoration(labelText: 'Email'),
               onChanged: (value) => setState(() => _email = value),
+              validator: (value) {
+                final validator = EmailValidator();
+                if (value == null || value.isEmpty || !validator.isValidEmail(value)) {
+                  return '유효한 이메일 주소를 입력해주세요.';
+                }
+                return null;
+              },
             ),
             ElevatedButton(
               onPressed: _updateUserInfo,
               child: Text('Update Info'),
             ),
+            Text('수정하고 싶은 것을 바꿔서 입력하고, 수정하지 않는다면 기존 것을 입력해 주세요.')
           ],
         ),
       ),
