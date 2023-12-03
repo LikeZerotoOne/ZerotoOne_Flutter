@@ -5,6 +5,7 @@ import 'package:pm25/API/APIService.dart';
 import 'package:pm25/Model/Schedule.dart';
 import 'package:pm25/NavigationBar/CommonBottomNavigationBar.dart';
 import 'package:pm25/Screen/AddScheduleForm.dart';
+import 'package:pm25/Screen/EditScheduleForm.dart';
 import 'package:pm25/Screen/LoginScreen.dart';
 import 'package:pm25/Storage/StorageUtil.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -92,6 +93,7 @@ class _CalendarPageState extends State<CalendarPage> {
     if (response.statusCode == 200) {
       _isLoading = false;
       final decodedData = utf8.decode(response.bodyBytes);
+      print("API Response: $decodedData"); // API 응답 출력
       final data = json.decode(decodedData);
       return Schedule.fromJson(data);
     } else {
@@ -148,29 +150,65 @@ class _CalendarPageState extends State<CalendarPage> {
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          FutureBuilder(
-                            future: _fetchScheduleDetails(schedule.scheduleId),
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState == ConnectionState.waiting) {
-                                return CircularProgressIndicator();
-                              } else if (snapshot.hasData) {
-                                final scheduleDetails = snapshot.data as Schedule;
-                                return Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Text('Content: ${scheduleDetails.scheduleContent}'), // 여기에서 상세 내용을 표시
-                                    // 기타 상세 정보 표시...
-                                  ],
-                                );
-                              } else {
-                                return Text('Failed to load details.');
-                              }
+                      child: Align(
+                        alignment: Alignment.centerLeft, // 여기에 정렬을 추가
+                        child: FutureBuilder(
+                          future: _fetchScheduleDetails(schedule.scheduleId),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState == ConnectionState.waiting) {
+                              return CircularProgressIndicator();
+                            } else if (snapshot.hasData) {
+                              final scheduleDetails = snapshot.data as Schedule;
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text('Content: ${scheduleDetails.scheduleContent}'),
+                                  // 기타 상세 정보 표시...
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      print("Passing Content to Edit Form: ${scheduleDetails.scheduleContent}");
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => EditScheduleForm(
+                                            scheduleId: schedule.scheduleId,
+                                            initialTitle: schedule.scheduleTitle,
+                                            initialContent: scheduleDetails.scheduleContent, // 여기를 수정
+                                            selectedDay: _selectedDay ?? DateTime.now(),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    child: Text('수정'),
+                                  ),
+                                  ElevatedButton(
+                                    onPressed: () async {
+                                      final responseCode = await APIService().deleteSchedule(schedule.scheduleId);
+                                      if (responseCode == 200) {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(content: Text('Schedule deleted successfully')),
+                                        );
+                                        Navigator.of(context).pushReplacement(
+                                          MaterialPageRoute(builder: (context) => CalendarPage()),
+                                        );
+                                      } else {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(content: Text('Failed to delete schedule')),
+                                        );
+                                        Navigator.of(context).pushReplacement(
+                                          MaterialPageRoute(builder: (context) => LoginScreen()),
+                                        );
+                                      }
+                                    },
+                                    child: Text('삭제'),
+                                  ),
+                                ],
+                              );
+                            } else {
+                              return Text('Failed to load details.');
+                            }
                             },
                           ),
-                        ],
                       ),
                     ),
                   ],

@@ -53,39 +53,46 @@ class _AddScheduleFormState extends State<AddScheduleForm> {
       appBar: AppBar(
         title: Text('Add Schedule'),
       ),
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Schedule Title'),
-                onChanged: (value) => setState(() => _scheduleTitle = value),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter schedule title';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Schedule Content'),
-                onChanged: (value) => setState(() => _scheduleContent = value),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter schedule content';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _submitSchedule,
-                child: Text('Submit'),
-              ),
-            ],
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                TextFormField(
+                  decoration: InputDecoration(labelText: 'Schedule Title'),
+                  onChanged: (value) => setState(() => _scheduleTitle = value),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter schedule title';
+                    }
+                    return null;
+                  },
+                ),
+                TextFormField(
+                  decoration: InputDecoration(
+                    labelText: 'Schedule Content',
+                    border: OutlineInputBorder(), // 테두리 추가
+                  ),
+                  maxLines: null, // 여러 줄 입력 가능
+                  keyboardType: TextInputType.multiline, // 여러 줄 입력을 위한 키보드 타입 설정
+                  onChanged: (value) => setState(() => _scheduleContent = value),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter schedule content';
+                    }
+                    return null;
+                  },
+                )
+                ,SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: _submitSchedule,
+                  child: Text('Submit'),
+                ),
+              ],
+            ),
           ),
         ),
       ),

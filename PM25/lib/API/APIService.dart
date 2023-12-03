@@ -250,4 +250,37 @@ class APIService {
     );
     return response.statusCode;
   }
+  Future<int> updateSchedule(int scheduleId, String title, String content, String date) async {
+    final accessToken = await TokenStorage().getAccessToken();
+    final url = Uri.parse('$_baseUrl/api/schedules/$scheduleId');
+
+    final response = await http.put(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+      body: json.encode({
+        'scheduleTitle': title,
+        'scheduleContent': content,
+        'scheduleDate': date,
+      }),
+    );
+
+    return response.statusCode;
+  }
+  Future<int> deleteSchedule(int scheduleId) async {
+    final accessToken = await TokenStorage().getAccessToken();
+    final url = Uri.parse('$_baseUrl/api/schedules/$scheduleId');
+
+    final response = await http.delete(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+
+    return response.statusCode;
+  }
 }

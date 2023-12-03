@@ -7,7 +7,7 @@ class SendPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text("Send")),
       body: Center(child: Text("Send")),
-      bottomNavigationBar: CommonBottomNavigationBar(selectedIndex: 0),
+      bottomNavigationBar: CommonBottomNavigationBar(selectedIndex: 1),
     );
   }
 }
