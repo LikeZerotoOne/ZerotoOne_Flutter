@@ -90,7 +90,7 @@ class _MyPageState extends State<MyPage> {
           ],
         ),
       ),
-      bottomNavigationBar: CommonBottomNavigationBar(selectedIndex: 0,),
+      bottomNavigationBar: CommonBottomNavigationBar(selectedIndex: 3,),
     );
   }
 

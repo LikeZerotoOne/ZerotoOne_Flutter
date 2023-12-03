@@ -35,7 +35,8 @@ dependencies:
   provider: ^5.0.0
   jwt_decode: ^0.3.1
   shared_preferences: ^2.2.2
-
+  table_calendar: ^3.0.9
+  intl: ^0.18.1
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

@@ -83,7 +83,7 @@ class _UserUpdatePageState extends State<UserUpdatePage> {
           ],
         ),
       ),
-      bottomNavigationBar: CommonBottomNavigationBar(selectedIndex: 0,),
+      bottomNavigationBar: CommonBottomNavigationBar(selectedIndex: 3,),
     );
   }
   void _updateUserInfo() async {

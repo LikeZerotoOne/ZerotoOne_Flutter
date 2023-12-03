@@ -1,4 +1,5 @@
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:pm25/Storage/StorageUtil.dart';
 import 'package:pm25/Storage/TokenStorage.dart';
 import '../Model/UserModel.dart';
@@ -9,7 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 
 class APIService {
-  final String _baseUrl = 'http://192.9.13.183:8080';
+  final String _baseUrl = 'http://192.168.20.61:8080';
 
   Future<http.Response> signUp(User user) {
     return http.post(
@@ -191,5 +192,62 @@ class APIService {
       },
     );
   }
+  Future<http.Response> getMonthlySchedules(int memberId, int year, int month) async {
+    final tokenStorage = TokenStorage();
+    final accessToken = await tokenStorage.getAccessToken();
+    final url = Uri.parse('$_baseUrl/api/schedules/monthly?memberId=$memberId&year=$year&month=$month');
 
+    return http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+  }
+  Future<http.Response> getDailySchedules(int memberId, DateTime date) async {
+    final tokenStorage = TokenStorage();
+    final accessToken = await tokenStorage.getAccessToken();
+    final formattedDate = DateFormat('yyyy-MM-dd').format(date); // 날짜 형식 변경
+    final url = Uri.parse('$_baseUrl/api/schedules/daily?memberId=$memberId&date=$formattedDate');
+
+    return http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+  }
+  Future<http.Response> getScheduleDetails(int scheduleId) async {
+    final tokenStorage = TokenStorage();
+    final accessToken = await tokenStorage.getAccessToken();
+    final url = Uri.parse('$_baseUrl/api/schedules/$scheduleId');
+
+    return http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+  }
+  Future<int> addSchedule(int memberId, String title, String content, String date) async {
+    final accessToken = await TokenStorage().getAccessToken();
+    final url = Uri.parse('$_baseUrl/api/schedules');
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+      body: json.encode({
+        'memberId': memberId,
+        'scheduleTitle': title,
+        'scheduleContent': content,
+        'scheduleDate': date,
+      }),
+    );
+    return response.statusCode;
+  }
 }
