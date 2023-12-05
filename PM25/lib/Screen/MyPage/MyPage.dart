@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:pm25/API/APIService.dart';
 import 'package:pm25/NavigationBar/CommonBottomNavigationBar.dart';
 import 'package:pm25/Screen/HomeScreen.dart';
-import 'package:pm25/Screen/LoginScreen.dart';
+import 'package:pm25/Screen/Member/LoginScreen.dart';
 import 'package:pm25/Screen/MyPage/UserInfoPage.dart';
 import 'package:pm25/Screen/MyPage/UserUpdatePage.dart';
 import 'package:pm25/Storage/StorageUtil.dart';

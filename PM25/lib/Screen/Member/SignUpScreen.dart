@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pm25/Validation/EmailValidator.dart';
 import 'package:pm25/Validation/UsernameChecker.dart';
-import '../API/APIService.dart';
-import '../Model/UserModel.dart';
+import '../../API/APIService.dart';
+import '../../Model/UserModel.dart';
 
 class SignUpScreen extends StatefulWidget {
   @override

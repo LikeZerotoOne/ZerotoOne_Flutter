@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pm25/Screen/HomeScreen.dart';
-import 'package:pm25/Screen/LoginScreen.dart';
-import 'package:pm25/Screen/SignUpScreen.dart';
+import 'package:pm25/Screen/Member/LoginScreen.dart';
+import 'package:pm25/Screen/Member/SignUpScreen.dart';
 
 void main() {
   runApp(

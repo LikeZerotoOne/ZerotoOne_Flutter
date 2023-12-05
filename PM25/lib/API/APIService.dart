@@ -10,7 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 
 class APIService {
-  final String _baseUrl = 'http://192.168.20.61:8080';
+  final String _baseUrl = 'http://172.30.2.245:8080';
 
   Future<http.Response> signUp(User user) {
     return http.post(
