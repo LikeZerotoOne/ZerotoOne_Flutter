@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:pm25/Storage/StorageUtil.dart';
@@ -10,7 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 
 class APIService {
-  final String _baseUrl = 'http://172.30.2.245:8080';
+  final String _baseUrl = 'http://192.168.13.10:8080';
 
   Future<http.Response> signUp(User user) {
     return http.post(
@@ -22,11 +24,7 @@ class APIService {
 
   Future<http.Response> checkUsernameDuplication(String username) async {
     final url = Uri.parse('$_baseUrl/members/$username');
-    final response = await http.post(
-      url,
-      // headers: {'Content-Type': 'application/json'},
-      // body: json.encode({"username": username}),
-    );
+    final response = await http.get(url);
     return response;
   }
 
@@ -282,5 +280,37 @@ class APIService {
     );
 
     return response.statusCode;
+  }
+  Future<bool> authenticateUser(int memberId) async {
+    final accessToken = await TokenStorage().getAccessToken();
+    final url = Uri.parse('$_baseUrl/api/members/auth/$memberId');
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+
+    return response.statusCode == 200;
+  }
+  Future<http.Response> postTextData({required String source, required String target, required String text, required int memberId, required String documentTitle}) async {
+    var url = Uri.parse('$_baseUrl/api/documents/textTrans');
+    var accessToken = await TokenStorage().getAccessToken();
+
+    var request = http.MultipartRequest('POST', url)
+      ..fields['source'] = source
+      ..fields['target'] = target
+      ..fields['text'] = text
+      ..fields['memberId'] = memberId.toString()
+      ..fields['documentTitle'] = documentTitle
+      ..headers.addAll({
+        HttpHeaders.authorizationHeader: 'Bearer $accessToken',
+        HttpHeaders.contentTypeHeader: 'multipart/form-data',
+      });
+
+    var response = await request.send();
+    return await http.Response.fromStream(response);
   }
 }
