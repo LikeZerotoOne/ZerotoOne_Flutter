@@ -51,27 +51,29 @@ class _SendTextPageState extends State<SendTextPage> {
       appBar: AppBar(title: Text('Send Text')),
       body: Form(
         key: _formKey,
-        child: Column(
-          children: <Widget>[
-            TextFormField(
-              decoration: InputDecoration(labelText: 'Document Title'),
-              onChanged: (value) => documentTitle = value,
-            ),
-            TextFormField(
-              decoration: InputDecoration(labelText: 'Text'),
-              maxLines: null,
-              keyboardType: TextInputType.multiline,
-              onChanged: (value) => text = value,
-            ),
-            ElevatedButton(
-              onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  sendTextData();
-                }
-              },
-              child: Text('전송'),
-            ),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              TextFormField(
+                decoration: InputDecoration(labelText: 'Document Title'),
+                onChanged: (value) => documentTitle = value,
+              ),
+              TextFormField(
+                decoration: InputDecoration(labelText: 'Text'),
+                maxLines: null,
+                keyboardType: TextInputType.multiline,
+                onChanged: (value) => text = value,
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    sendTextData();
+                  }
+                },
+                child: Text('전송'),
+              ),
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: CommonBottomNavigationBar(selectedIndex: 1,),

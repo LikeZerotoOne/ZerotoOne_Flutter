@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:path/path.dart';
 import 'package:pm25/Storage/StorageUtil.dart';
 import 'package:pm25/Storage/TokenStorage.dart';
 import '../Model/UserModel.dart';
@@ -12,7 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 
 class APIService {
-  final String _baseUrl = 'http://192.168.13.10:8080';
+  final String _baseUrl = 'http://172.16.235.220:8080';
 
   Future<http.Response> signUp(User user) {
     return http.post(
@@ -296,7 +297,7 @@ class APIService {
     return response.statusCode == 200;
   }
   Future<http.Response> postTextData({required String source, required String target, required String text, required int memberId, required String documentTitle}) async {
-    var url = Uri.parse('$_baseUrl/api/documents/textTrans');
+    var url = Uri.parse('$_baseUrl/api/documents/text');
     var accessToken = await TokenStorage().getAccessToken();
 
     var request = http.MultipartRequest('POST', url)
@@ -312,5 +313,144 @@ class APIService {
 
     var response = await request.send();
     return await http.Response.fromStream(response);
+  }
+  Future<http.Response> sendImage({
+    required File imageFile,
+    required String documentTitle,
+    required int memberId,
+  }) async {
+    var url = Uri.parse('$_baseUrl/api/documents/img');
+    var accessToken = await TokenStorage().getAccessToken(); // Access Token 가져오기
+
+    var request = http.MultipartRequest('POST', url)
+      ..fields['memberId'] = memberId.toString()
+      ..fields['documentTitle'] = documentTitle
+      ..headers['Authorization'] = 'Bearer $accessToken';
+
+    request.files.add(
+      await http.MultipartFile.fromPath(
+        'image',
+        imageFile.path,
+        filename: basename(imageFile.path),
+      ),
+    );
+
+    return await request.send().then((result) async {
+      return await http.Response.fromStream(result);
+    });
+  }
+  Future<http.Response> getDocumentDetails(int documentId) async {
+    final url = Uri.parse('$_baseUrl/api/documents/$documentId');
+    final accessToken = await TokenStorage().getAccessToken();
+
+    return await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+  }
+  Future<http.Response> deleteDocument(int documentId) async {
+    var url = Uri.parse('$_baseUrl/api/documents/$documentId');
+    var accessToken = await TokenStorage().getAccessToken();
+
+    return await http.delete(
+      url,
+      headers: {
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+  }
+  Future<http.Response> extractKeywords(int documentId) async {
+    final url = Uri.parse('$_baseUrl/api/keywords/$documentId');
+    var accessToken = await TokenStorage().getAccessToken();
+
+    return await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+  }
+  Future<List<dynamic>> fetchKeywords(int documentId) async {
+    var url = Uri.parse('$_baseUrl/api/keywords/$documentId');
+    var accessToken = await TokenStorage().getAccessToken();
+
+    var response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+
+        // Include authorization header if needed
+      },
+    );
+
+    if (response.statusCode == 200) {
+      var data = json.decode(utf8.decode(response.bodyBytes)); // UTF-8 디코딩
+      return data['keywords'];
+    } else {
+      // Handle error
+      throw Exception('Failed to load keywords');
+    }
+  }
+  Future<http.Response> deleteKeywords(int documentId) async {
+    var url = Uri.parse('$_baseUrl/api/keywords/$documentId');
+    var accessToken = await TokenStorage().getAccessToken();
+
+    return await http.delete(
+      url,
+      headers: {
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+  }
+  Future<http.Response> summarizeParagraph(int documentId) async {
+    var url = Uri.parse('$_baseUrl/api/contexts/$documentId');
+    var accessToken = await TokenStorage().getAccessToken();
+
+    return await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+  }
+  Future<http.Response> fetchSummaryResults(int documentId) async {
+    var url = Uri.parse('$_baseUrl/api/contexts/$documentId');
+    var accessToken = await TokenStorage().getAccessToken();
+
+    return await http.get(
+      url,
+      headers: {
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+  }
+  Future<http.Response> deleteSummaryResults(int documentId) async {
+    var url = Uri.parse('$_baseUrl/api/contexts/$documentId');
+    var accessToken = await TokenStorage().getAccessToken();
+
+    return await http.delete(
+      url,
+      headers: {
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+  }
+  Future<http.Response> fetchDocuments(int memberId) async {
+    var url = Uri.parse('$_baseUrl/api/documents/mainPage/$memberId');
+    var accessToken = await TokenStorage().getAccessToken(); // Access Token 가져오기
+
+    return await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
   }
 }
