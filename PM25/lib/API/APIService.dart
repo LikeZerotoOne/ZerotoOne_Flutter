@@ -464,4 +464,27 @@ class APIService {
       },
     );
   }
+  Future<http.Response> createMultipleChoiceQuestions(int documentId) async {
+    final url = Uri.parse('$_baseUrl/api/multiples/$documentId');
+    var accessToken = await TokenStorage().getAccessToken();
+
+    return await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+  }
+  Future<http.Response> getMultipleChoiceQuestions(int documentId, List<int> multipleIds) async {
+    var uri = Uri.parse('$_baseUrl/api/multiples/result?documentId=$documentId' +
+        multipleIds.map((id) => '&multipleIds=$id').join());
+
+    var accessToken = await TokenStorage().getAccessToken(); // accesstoken 가져오기
+
+    return await http.get(uri, headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $accessToken',
+    });
+  }
 }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:pm25/API/APIService.dart';
 import 'package:pm25/NavigationBar/CommonBottomNavigationBar.dart';
 import 'package:pm25/Screen/Send/Keywords/KeywordResultPage.dart';
+import 'package:pm25/Screen/Send/MultipleChoice/MultipleChoiceQuestionPage.dart';
 import 'package:pm25/Screen/Send/Summary/SummaryResultPage.dart';
 
 class MakeQuestionPage extends StatefulWidget {
@@ -76,9 +77,35 @@ class _MakeQuestionPageState extends State<MakeQuestionPage> {
   }
 
 
-  // 객관식 문제 생성 기능을 위한 함수
-  void createMultipleChoiceQuestions() {
-    // 객관식 문제 생성 로직 또는 페이지 이동
+  void createMultipleChoiceQuestions() async {
+    setState(() {
+      isLoading = true; // 로딩 시작
+    });
+
+    var response = await APIService().createMultipleChoiceQuestions(widget.documentId);
+
+    setState(() {
+      isLoading = false; // 로딩 종료
+    });
+
+    if (response.statusCode == 200) {
+      var responseData = json.decode(response.body);
+      int documentId = responseData['documentId'];
+      List<int> multipleIds = List<int>.from(responseData['multipleIds']);
+
+      // MultipleChoiceQuestionPage로 이동
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => MultipleChoiceQuestionPage(documentId: documentId, multipleIds: multipleIds),
+        ),
+      );
+    } else {
+      // 오류 처리
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('객관식 문제 생성 실패')),
+      );
+    }
   }
 
   // 주관식 문제 생성 기능을 위한 함수
