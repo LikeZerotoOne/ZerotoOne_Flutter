@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pm25/API/APIService.dart';
 import 'package:pm25/NavigationBar/CommonBottomNavigationBar.dart';
+import 'package:pm25/Screen/StudyLog/DocumentDetailsPage.dart';
 import 'package:pm25/Storage/StorageUtil.dart';
 import 'dart:convert';
 
@@ -58,7 +59,12 @@ class _StudyLogPageState extends State<StudyLogPage> {
 
           return ElevatedButton(
             onPressed: () {
-              // 버튼 클릭시 수행할 기능 추가
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => DocumentDetailsPage(documentId: document['documentId']),
+                ),
+              );
             },
             child: ListTile(
               title: Text(document['documentTitle']),

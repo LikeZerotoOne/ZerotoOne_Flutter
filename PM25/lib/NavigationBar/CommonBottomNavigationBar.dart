@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pm25/Screen/Calendar/CalendarPage.dart';
 import 'package:pm25/Screen/MyPage/MyPage.dart';
 import 'package:pm25/Screen/Send/SendPage.dart';
-import 'package:pm25/Screen/StudyLogPage.dart';
+import 'package:pm25/Screen/StudyLog/StudyLogPage.dart';
 
 
 class CommonBottomNavigationBar extends StatelessWidget {

@@ -13,7 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 
 class APIService {
-  final String _baseUrl = 'http://172.16.235.220:8080';
+  final String _baseUrl = 'http://192.168.1.29:8080';
 
   Future<http.Response> signUp(User user) {
     return http.post(
@@ -449,6 +449,17 @@ class APIService {
       url,
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+  }
+  Future<http.Response> fetchDocumentDetails(int documentId) async {
+    var url = Uri.parse('$_baseUrl/api/documents/$documentId');
+    var accessToken = await TokenStorage().getAccessToken();
+
+    return await http.get(
+      url,
+      headers: {
         'Authorization': 'Bearer $accessToken',
       },
     );
