@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:pm25/API/APIService.dart';
 import 'package:pm25/NavigationBar/CommonBottomNavigationBar.dart';
 import 'package:pm25/Screen/Send/MakeQuestionPage.dart';
+import 'package:pm25/Screen/StudyLog/ExistingMaterialsPage.dart';
 
 class DocumentDetailsPage extends StatefulWidget {
   final int documentId;
@@ -75,6 +76,17 @@ class _DocumentDetailsPageState extends State<DocumentDetailsPage> {
                   );
                 },
                 child: Text('새 자료 생성하기'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ExistingMaterialsPage(documentId: widget.documentId),
+                    ),
+                  );
+                },
+                child: Text('기존 자료 보기'),
               ),
             ],
           ),

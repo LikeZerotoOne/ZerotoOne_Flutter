@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:pm25/API/APIService.dart';
 import 'package:pm25/NavigationBar/CommonBottomNavigationBar.dart';
+import 'package:pm25/Screen/Send/MakeQuestionPage.dart';
 
 class MultipleChoiceQuestionPage extends StatefulWidget {
   final int documentId;
@@ -18,6 +19,7 @@ class _MultipleChoiceQuestionPageState extends State<MultipleChoiceQuestionPage>
   List<Question> questions = [];
   bool isLoading = true;
   bool showAnswers = false;
+  List<int> selectedMultipleIds = [];
 
   @override
   void initState() {
@@ -60,30 +62,74 @@ class _MultipleChoiceQuestionPageState extends State<MultipleChoiceQuestionPage>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Multiple Choice Questions')),
-      body: isLoading
-          ? Center(child: CircularProgressIndicator())
-          : ListView.builder(
-        itemCount: questions.length,
-        itemBuilder: (context, index) {
-          return buildQuestion(questions[index]);
-        },
+      body: Column(
+        children: [
+          Expanded(
+            child: isLoading
+                ? Center(child: CircularProgressIndicator())
+                : ListView.builder(
+              itemCount: questions.length,
+              itemBuilder: (context, index) {
+                return buildQuestion(questions[index], widget.multipleIds[index]);
+              },
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+            child: ElevatedButton(
+              onPressed: () => Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => MakeQuestionPage(documentId: widget.documentId)),
+              ),
+              child: Text('확인'),
+              style: ElevatedButton.styleFrom(
+                primary: Colors.blue, // 버튼 색상 변경
+                minimumSize: Size(double.infinity, 50), // 버튼 크기
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+            child: ElevatedButton(
+              onPressed: deleteSelectedQuestions,
+              child: Text('삭제'),
+              style: ElevatedButton.styleFrom(
+                primary: Colors.red, // 버튼 색상
+                minimumSize: Size(double.infinity, 50), // 버튼 크기
+              ),
+            ),
+          ),
+        ],
       ),
       bottomNavigationBar: CommonBottomNavigationBar(selectedIndex: 1),
       floatingActionButton: FloatingActionButton(
         onPressed: () => setState(() => showAnswers = !showAnswers),
-        child: Text(showAnswers ? '답자 가리기' : '답지 보기'), // 아이콘 대신 텍스트 사용
-        backgroundColor: Theme.of(context).primaryColor, // 버튼 배경색 지정
+        child: Text(showAnswers ? '답자 가리기' : '답지 보기'),
+        backgroundColor: Theme.of(context).primaryColor,
       ),
     );
   }
 
-  Widget buildQuestion(Question question) {
+
+  Widget buildQuestion(Question question, int multipleId) {
     return Card(
       child: Column(
         children: [
-          Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Text(
+          ListTile(
+            leading: Checkbox(
+              value: question.isSelected,
+              onChanged: (bool? newValue) {
+                setState(() {
+                  question.isSelected = newValue ?? false;
+                  if (question.isSelected) {
+                    selectedMultipleIds.add(multipleId);
+                  } else {
+                    selectedMultipleIds.remove(multipleId);
+                  }
+                });
+              },
+            ),
+            title: Text(
               question.title,
               style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
             ),
@@ -105,10 +151,47 @@ class _MultipleChoiceQuestionPageState extends State<MultipleChoiceQuestionPage>
       ),
     );
   }
+  void deleteSelectedQuestions() async {
+    // 선택된 문제 삭제 로직
+    if (selectedMultipleIds.isEmpty) return;
+
+    try {
+      var response = await APIService().deleteMultipleChoiceQuestions(
+          widget.documentId, selectedMultipleIds);
+      if (response.statusCode == 200) {
+        // 성공적으로 삭제됨
+        if (selectedMultipleIds.length == widget.multipleIds.length) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => MakeQuestionPage(documentId: widget.documentId)),
+          );
+        } else {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => MultipleChoiceQuestionPage(
+                documentId: widget.documentId, multipleIds: widget.multipleIds.where((id) => !selectedMultipleIds.contains(id)).toList())),
+          );
+        }
+      } else {
+        // 오류 처리
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to delete questions')),
+        );
+      }
+    } catch (e) {
+      // 오류 처리
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('An error occurred: $e')),
+      );
+    }
+  }
+
 }
+
 class Question {
   String title;
   List<Choice> multipleChoices;
+  bool isSelected = false; // 체크박스 선택 상태를 나타내는 필드 추가
 
   Question({required this.title, required this.multipleChoices});
 

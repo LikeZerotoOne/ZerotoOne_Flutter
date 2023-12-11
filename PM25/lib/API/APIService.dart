@@ -13,7 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 
 class APIService {
-  final String _baseUrl = 'http://192.168.1.29:8080';
+  final String _baseUrl = 'http://192.9.13.244:8080';
 
   Future<http.Response> signUp(User user) {
     return http.post(
@@ -487,4 +487,75 @@ class APIService {
       'Authorization': 'Bearer $accessToken',
     });
   }
+  Future<http.Response> deleteMultipleChoiceQuestions(int documentId, List<int> multipleIds) async {
+    var url = Uri.parse('$_baseUrl/api/multiples/result');
+    var accessToken = await TokenStorage().getAccessToken(); // accesstoken 가져오기
+    var body = jsonEncode({
+      'documentId': documentId,
+      'multipleIds': multipleIds,
+    });
+
+    var response = await http.delete(url, body: body, headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $accessToken', // 여기서 토큰은 적절하게 설정
+    });
+
+    return response;
+  }
+  Future<http.Response> getKeywords(int documentId) async {
+    var url = Uri.parse('$_baseUrl/api/keywords/$documentId'); // 서버 URL 수정
+    var accessToken = await TokenStorage().getAccessToken(); // accesstoken 가져오기
+
+    var response = await http.get(url, headers: {
+      // 요청 헤더 설정
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $accessToken',
+    });
+    return response;
+  }
+  Future<http.Response> getSummary(int documentId) async {
+    var accessToken = await TokenStorage().getAccessToken(); // accesstoken 가져오기
+
+    var url = Uri.parse('$_baseUrl/api/contexts/$documentId'); // 서버 URL 수정
+    var response = await http.get(url, headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $accessToken',
+    });
+    return response;
+  }
+  Future<http.Response> getMultipleChoice(int documentId) async {
+    var accessToken = await TokenStorage().getAccessToken(); // accesstoken 가져오기
+
+    var url = Uri.parse('$_baseUrl/api/multiples/$documentId'); // 서버 URL 수정
+    var response = await http.get(url, headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $accessToken',    });
+    return response;
+  }
+  Future<http.Response> getMultipleChoiceDetail(int documentId, int multipleId) async {
+    var accessToken = await TokenStorage().getAccessToken(); // accesstoken 가져오기
+
+    var url = Uri.parse('$_baseUrl/api/multiples?documentId=$documentId&multipleId=$multipleId'); // URL 수정
+    var response = await http.get(url, headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $accessToken',       });
+    return response;
+  }
+  Future<http.Response> deleteMultipleChoice(int documentId, int multipleId) async {
+    var url = Uri.parse('$_baseUrl/api/multiples'); // URL 수정
+    var accessToken = await TokenStorage().getAccessToken(); // accesstoken 가져오기
+
+    var response = await http.delete(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',       },
+      body: jsonEncode({
+        'documentId': documentId,
+        'multipleId': multipleId,
+      }),
+    );
+    return response;
+  }
 }
+
