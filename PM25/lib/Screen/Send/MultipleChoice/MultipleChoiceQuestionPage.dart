@@ -198,7 +198,7 @@ class Question {
   factory Question.fromJson(Map<String, dynamic> json) {
     var choicesJson = json['multipleChoices'] as List;
     List<Choice> choices = choicesJson.map((choiceJson) => Choice.fromJson(choiceJson)).toList();
-    return Question(title: json['title'], multipleChoices: choices);
+    return Question(title: json['question'], multipleChoices: choices);
   }
 }
 

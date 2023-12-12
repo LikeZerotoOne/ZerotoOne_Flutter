@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pm25/NavigationBar/CommonBottomNavigationBar.dart';
 import 'package:pm25/Screen/StudyLog/KeywordsPage.dart';
 import 'package:pm25/Screen/StudyLog/MultipleChoiceListPage.dart';
+import 'package:pm25/Screen/StudyLog/SubjectiveQuestionsListPage.dart';
 import 'package:pm25/Screen/StudyLog/SummaryPage.dart';
 
 class ExistingMaterialsPage extends StatelessWidget {
@@ -56,8 +57,12 @@ class ExistingMaterialsPage extends StatelessWidget {
 
             ElevatedButton(
               onPressed: () {
-                // 주관식 문제 관련 로직 또는 페이지 이동
-              },
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SubjectiveQuestionsListPage(documentId: documentId),
+                  ),
+                );              },
               child: Text('주관식 문제'),
             ),
           ],

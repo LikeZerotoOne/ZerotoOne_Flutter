@@ -5,6 +5,7 @@ import 'package:pm25/API/APIService.dart';
 import 'package:pm25/NavigationBar/CommonBottomNavigationBar.dart';
 import 'package:pm25/Screen/Send/Keywords/KeywordResultPage.dart';
 import 'package:pm25/Screen/Send/MultipleChoice/MultipleChoiceQuestionPage.dart';
+import 'package:pm25/Screen/Send/Subjective/NewSubjectiveQuestionResultPage.dart';
 import 'package:pm25/Screen/Send/Summary/SummaryResultPage.dart';
 
 class MakeQuestionPage extends StatefulWidget {
@@ -108,9 +109,35 @@ class _MakeQuestionPageState extends State<MakeQuestionPage> {
     }
   }
 
-  // 주관식 문제 생성 기능을 위한 함수
-  void createSubjectiveQuestions() {
-    // 주관식 문제 생성 로직 또는 페이지 이동
+  void createSubjectiveQuestions() async {
+    setState(() {
+      isLoading = true; // 로딩 시작
+    });
+
+    var response = await APIService().createSubjectiveQuestions(widget.documentId);
+
+    setState(() {
+      isLoading = false; // 로딩 종료
+    });
+
+    if (response.statusCode == 200) {
+      var responseData = json.decode(response.body);
+      int documentId = responseData['documentId'];
+      List<int> writtenIds = List<int>.from(responseData['writtenIds']);
+
+      // 새로운 페이지로 이동
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => NewSubjectiveQuestionResultPage(documentId: documentId, writtenIds: writtenIds),
+        ),
+      );
+    } else {
+      // 오류 처리
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('주관식 문제 생성 실패')),
+      );
+    }
   }
 
   @override

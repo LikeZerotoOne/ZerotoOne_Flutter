@@ -12,8 +12,9 @@ import 'package:jwt_decode/jwt_decode.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 
+
 class APIService {
-  final String _baseUrl = 'http://192.9.13.244:8080';
+  final String _baseUrl = 'http://192.9.13.79:8080';
 
   Future<http.Response> signUp(User user) {
     return http.post(
@@ -556,6 +557,77 @@ class APIService {
       }),
     );
     return response;
+  }
+  Future<http.Response> createSubjectiveQuestions(int documentId) async {
+    var accessToken = await TokenStorage().getAccessToken(); // accesstoken 가져오기
+    var uri = Uri.parse('$_baseUrl/api/writtens/$documentId'); // 실제 서버 주소로 변경하세요.
+    return await http.post(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+  }
+  Future<http.Response> getSubjectiveQuestions(int documentId, List<int> writtenIds) async {
+    var accessToken = await TokenStorage().getAccessToken(); // accesstoken 가져오기
+    var queryParameters = {
+      'documentId': documentId.toString(),
+      'writtenIds': writtenIds.map((id) => id.toString()).toList(),
+    };
+    var uri = Uri.http('192.9.13.79:8080', '/api/writtens/result', queryParameters); // Uri 생성시 포트 번호 명시
+    return await http.get(uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+  }
+  Future<http.Response> deleteSubjectiveQuestion(int documentId, List<int> writtenIds) async {
+    var url = Uri.parse('$_baseUrl/api/writtens/result');
+    var accessToken = await TokenStorage().getAccessToken(); // accesstoken 가져오기
+
+    var body = json.encode({
+      'documentId': documentId,
+      'writtenIds': writtenIds,
+    });
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $accessToken',
+    };
+    return await http.delete(url, headers: headers, body: body);
+  }
+  Future<http.Response> getWrittenQuestions(int documentId) async {
+    var accessToken = await TokenStorage().getAccessToken(); // accesstoken 가져오기
+
+    var uri = Uri.parse('$_baseUrl/api/writtens/$documentId');
+    return await http.get(uri, headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $accessToken',    });
+  }
+  Future<http.Response> getSubjectiveQuestionDetail(int documentId, int writtenId) async {
+    var accessToken = await TokenStorage().getAccessToken(); // accesstoken 가져오기
+
+    var uri = Uri.parse('$_baseUrl/api/writtens?documentId=$documentId&writtenId=$writtenId');
+    return await http.get(uri, headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $accessToken',
+    });
+  }
+  Future<http.Response> deleteSubjective(int documentId, int writtenId) async {
+    var accessToken = await TokenStorage().getAccessToken(); // accesstoken 가져오기
+    var uri = Uri.parse('$_baseUrl/api/writtens');
+    var body = jsonEncode({
+      'documentId': documentId,
+      'writtenId': writtenId,
+    });
+
+    return await http.delete(uri, body: body, headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $accessToken',
+
+      // 필요한 헤더 추가
+    });
   }
 }
 
