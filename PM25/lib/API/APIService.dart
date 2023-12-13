@@ -13,8 +13,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 
 
+
 class APIService {
-  final String _baseUrl = 'http://192.9.13.79:8080';
+  final String _baseUrl = 'http://192.9.12.169:8080';
 
   Future<http.Response> signUp(User user) {
     return http.post(
@@ -575,14 +576,17 @@ class APIService {
       'documentId': documentId.toString(),
       'writtenIds': writtenIds.map((id) => id.toString()).toList(),
     };
-    var uri = Uri.http('192.9.13.79:8080', '/api/writtens/result', queryParameters); // Uri 생성시 포트 번호 명시
-    return await http.get(uri,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $accessToken',
-      },
-    );
+
+    // _baseUrl을 활용하여 Uri 생성
+    var uri = Uri.parse(_baseUrl)
+        .replace(path: '/api/writtens/result', queryParameters: queryParameters);
+
+    return await http.get(uri, headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $accessToken',
+    });
   }
+
   Future<http.Response> deleteSubjectiveQuestion(int documentId, List<int> writtenIds) async {
     var url = Uri.parse('$_baseUrl/api/writtens/result');
     var accessToken = await TokenStorage().getAccessToken(); // accesstoken 가져오기
