@@ -54,7 +54,12 @@ class _PreviewSendImagePageState extends State<PreviewSendImagePage> {
         context,
         MaterialPageRoute(builder: (context) => ImageToTextResultPage(documentId: documentId)),
       );
-    } else {
+    } else if (response.statusCode == 500) {
+      // 네트워크 오류 처리
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('네트워크 오류입니다. 재시도 해주세요.')),
+      );
+    }else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('실패')),
       );

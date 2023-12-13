@@ -45,8 +45,13 @@ class _MakeQuestionPageState extends State<MakeQuestionPage> {
           builder: (context) => KeywordResultPage(documentId: receivedDocumentId),
         ),
       );
+    } else if (response.statusCode == 500) {
+      // 네트워크 오류 처리
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('네트워크 오류입니다. 재시도 해주세요.')),
+      );
     } else {
-      // 오류 처리
+      // 기타 오류 처리
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('키워드 추출 실패')),
       );
@@ -70,7 +75,12 @@ class _MakeQuestionPageState extends State<MakeQuestionPage> {
           builder: (context) => SummaryResultPage(documentId: widget.documentId),
         ),
       );
-    } else {
+    } else if (response.statusCode == 500) {
+      // 네트워크 오류 처리
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('네트워크 오류입니다. 재시도 해주세요.')),
+      );
+    }else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('문단 요약 실패')),
       );
@@ -100,6 +110,11 @@ class _MakeQuestionPageState extends State<MakeQuestionPage> {
         MaterialPageRoute(
           builder: (context) => MultipleChoiceQuestionPage(documentId: documentId, multipleIds: multipleIds),
         ),
+      );
+    }else if (response.statusCode == 500) {
+      // 네트워크 오류 처리
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('네트워크 오류입니다. 재시도 해주세요.')),
       );
     } else {
       // 오류 처리
@@ -132,7 +147,12 @@ class _MakeQuestionPageState extends State<MakeQuestionPage> {
           builder: (context) => NewSubjectiveQuestionResultPage(documentId: documentId, writtenIds: writtenIds),
         ),
       );
-    } else {
+    } else if (response.statusCode == 500) {
+      // 네트워크 오류 처리
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('네트워크 오류입니다. 재시도 해주세요.')),
+      );
+    }else {
       // 오류 처리
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('주관식 문제 생성 실패')),
