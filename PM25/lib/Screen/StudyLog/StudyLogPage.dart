@@ -38,6 +38,18 @@ class _StudyLogPageState extends State<StudyLogPage> {
       );
     }
   }
+  void deleteDocument(int documentId) async {
+    var response = await APIService().deleteDocument(documentId);
+    if (response.statusCode == 200) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('문서가 삭제되었습니다')),
+      );
+      _fetchDocuments(); // 문서 목록을 다시 가져옴
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('문서 삭제를 실패했습니다.')),
+      );    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +58,7 @@ class _StudyLogPageState extends State<StudyLogPage> {
       body: isLoading
           ? Center(child: CircularProgressIndicator())
           : ListView.builder(
-        itemCount: documents.length,
+          itemCount: documents.length,
         itemBuilder: (context, index) {
           var document = documents[index];
           var documentCreated = DateTime(
@@ -66,10 +78,14 @@ class _StudyLogPageState extends State<StudyLogPage> {
                 ),
               );
             },
-            child: ListTile(
-              title: Text(document['documentTitle']),
-              subtitle: Text('생성일자: $formattedDate'),
-            ),
+            child:ListTile(
+            title: Text(document['documentTitle']),
+          subtitle: Text('생성일자: $formattedDate'),
+          trailing: IconButton(
+          icon: Icon(Icons.delete),
+          onPressed: () => deleteDocument(document['documentId']),
+          ),
+          )
           );
         },
       ),
