@@ -5,6 +5,7 @@ import 'package:pm25/API/APIService.dart';
 import 'package:pm25/NavigationBar/CommonBottomNavigationBar.dart';
 import 'package:pm25/Screen/Send/MakeQuestionPage.dart';
 import 'package:pm25/Screen/StudyLog/ExistingMaterialsPage.dart';
+import 'package:pm25/Screen/SplashScreen_Loading.dart';
 
 class DocumentDetailsPage extends StatefulWidget {
   final int documentId;
@@ -44,10 +45,15 @@ class _DocumentDetailsPageState extends State<DocumentDetailsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Document Details"),
+      title: Text(
+        '문서 상세',
+        style: TextStyle(color: Colors.black),
       ),
+      backgroundColor: Color(0xFFFFFFFF),
+      iconTheme: IconThemeData(color: Colors.black),
+    ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? Center(child: SplashScreen_Loading())
           : SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.all(16.0),
@@ -55,38 +61,85 @@ class _DocumentDetailsPageState extends State<DocumentDetailsPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(
-                'Title: $documentTitle',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                '제목: $documentTitle',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500,),
               ),
               SizedBox(height: 10),
               Text(
-                'Content:',
+                '내용:',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
               ),
               SizedBox(height: 5),
               Text(koContent),
               SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => MakeQuestionPage(documentId: widget.documentId),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MakeQuestionPage(documentId: widget.documentId),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      primary: Color(0xFFFFFFFF),
+                      onPrimary: Colors.black,
+                      minimumSize: Size(0.4 * MediaQuery
+                          .of(context)
+                          .size
+                          .width, 60),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
+                        side: BorderSide(
+                          color: Color(0xFFC3EAF4),
+                          width: 4.0,
+                        ),
+                      ),
                     ),
-                  );
-                },
-                child: Text('새 자료 생성하기'),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ExistingMaterialsPage(documentId: widget.documentId),
+                    child: Text(
+                      '새 자료 생성하기',
+                      style: TextStyle(
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
-                  );
-                },
-                child: Text('기존 자료 보기'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ExistingMaterialsPage(documentId: widget.documentId),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      primary: Color(0xFFFFFFFF),
+                      onPrimary: Colors.black,
+                      minimumSize: Size(0.4 * MediaQuery
+                          .of(context)
+                          .size
+                          .width, 60),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
+                        side: BorderSide(
+                          color: Color(0xFFC3EAF4),
+                          width: 4.0,
+                        ),
+                      ),
+                    ),
+                    child: Text(
+                      '기존 자료 보기',
+                      style: TextStyle(
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

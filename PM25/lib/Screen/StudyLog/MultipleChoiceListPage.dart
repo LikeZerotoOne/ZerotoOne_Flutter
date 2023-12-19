@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:pm25/API/APIService.dart';
 import 'package:pm25/NavigationBar/CommonBottomNavigationBar.dart';
 import 'package:pm25/Screen/StudyLog/MultipleChoiceDetailPage.dart';
+import 'package:pm25/Screen/SplashScreen_Loading.dart';
 
 class MultipleChoiceListPage extends StatefulWidget {
   final int documentId;
@@ -42,17 +43,29 @@ class _MultipleChoiceListPageState extends State<MultipleChoiceListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Multiple Choice Questions'),
+        title: Text(
+          '나의 공부내역 - 객관식 문제',
+          style: TextStyle(color: Colors.black),
+        ),
+        backgroundColor: Color(0xFFFFFFFF),
+        iconTheme: IconThemeData(color: Colors.black),
       ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? Center(child: SplashScreen_Loading())
+          : multiples.isEmpty
+          ? Center(
+        child: Text(
+          '생성된 자료가 없습니다.',
+          style: TextStyle(fontSize: 18.0),
+        ),
+      )
           : ListView.builder(
         itemCount: multiples.length,
         itemBuilder: (context, index) {
           var multiple = multiples[index];
           return ListTile(
             title: Text(multiple['multipleTitle']),
-            subtitle: Text('Created on: ${multiple['multipleCreated'].join('-')}'),
+            subtitle: Text('생성 날짜 : ${multiple['multipleCreated'].join('-')}'),
             onTap: () {
               Navigator.push(
                 context,
@@ -62,13 +75,13 @@ class _MultipleChoiceListPageState extends State<MultipleChoiceListPage> {
                     multipleId: multiple['multipleId'],
                   ),
                 ),
-              ).then((_) => fetchMultipleChoiceQuestions()); // 여기에 추가
+              ).then((_) => fetchMultipleChoiceQuestions());
             },
           );
         },
       ),
       bottomNavigationBar: CommonBottomNavigationBar(selectedIndex: 0),
-
     );
   }
+
 }

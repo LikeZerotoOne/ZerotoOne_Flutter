@@ -70,40 +70,62 @@ class _EditScheduleFormState extends State<EditScheduleForm> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Edit Schedule'),
+        title: Text(
+          '일정 수정하기',
+          style: TextStyle(color: Colors.black),
+        ),
+        backgroundColor: Color(0xFFFFFFFF),
+        iconTheme: IconThemeData(color: Colors.black),
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              TextFormField(
-                controller: _titleController,
-                decoration: InputDecoration(labelText: 'Schedule Title'),
-              ),
-              TextFormField(
-                controller: _contentController,
-                decoration: InputDecoration(
-                  labelText: 'Schedule Content',
-                  border: OutlineInputBorder(), // 테두리 추가
+        child: SingleChildScrollView(
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisAlignment: MainAxisAlignment.center, // 가로 중앙 정렬
+              children: <Widget>[
+                SizedBox(height: 40),
+                TextFormField(
+                  controller: _titleController,
+                  decoration: InputDecoration(labelText: '일정 제목'),
                 ),
-                maxLines: null, // 여러 줄 입력 가능
-                keyboardType: TextInputType.multiline, // 여러 줄 입력을 위한 키보드 타입 설정
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter schedule content';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _submitChanges,
-                child: Text('수정 완료'),
-              ),
-            ],
+                SizedBox(height: 40),
+                TextFormField(
+                  controller: _contentController,
+                  decoration: InputDecoration(
+                    labelText: '일정 내용',
+                    border: OutlineInputBorder(), // 테두리 추가
+                  ),
+                  maxLines: null, // 여러 줄 입력 가능
+                  keyboardType: TextInputType.multiline, // 여러 줄 입력을 위한 키보드 타입 설정
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return '일정 내용을 입력해주세요.';
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: 100),
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  padding: EdgeInsets.symmetric(horizontal: 16.0),
+                  child: ElevatedButton(
+                    onPressed: _submitChanges,
+                    child: Text('수정하기'),
+                    style: ElevatedButton.styleFrom(
+                      primary: Color(0xFF226FA9),
+                      onPrimary: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      minimumSize: Size(MediaQuery.of(context).size.width, 50.0),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

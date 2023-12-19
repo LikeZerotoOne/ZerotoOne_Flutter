@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:pm25/API/APIService.dart';
 import 'package:pm25/NavigationBar/CommonBottomNavigationBar.dart';
 import 'package:pm25/Screen/Send/MakeQuestionPage.dart';
+import 'package:pm25/Screen/SplashScreen_AI.dart';
 
 class MultipleChoiceQuestionPage extends StatefulWidget {
   final int documentId;
@@ -61,12 +62,19 @@ class _MultipleChoiceQuestionPageState extends State<MultipleChoiceQuestionPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Multiple Choice Questions')),
+      appBar: AppBar(
+        title: Text(
+          '자료 생성 - 객관식 문제 ',
+          style: TextStyle(color: Colors.black),
+        ),
+        backgroundColor: Color(0xFFFFFFFF),
+        iconTheme: IconThemeData(color: Colors.black),
+      ),
       body: Column(
         children: [
           Expanded(
             child: isLoading
-                ? Center(child: CircularProgressIndicator())
+                ? Center(child: SplashScreen_AI())
                 : ListView.builder(
               itemCount: questions.length,
               itemBuilder: (context, index) {
@@ -75,39 +83,75 @@ class _MultipleChoiceQuestionPageState extends State<MultipleChoiceQuestionPage>
             ),
           ),
           Padding(
-            padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-            child: ElevatedButton(
-              onPressed: () => Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => MakeQuestionPage(documentId: widget.documentId)),
-              ),
-              child: Text('확인'),
-              style: ElevatedButton.styleFrom(
-                primary: Colors.blue, // 버튼 색상 변경
-                minimumSize: Size(double.infinity, 50), // 버튼 크기
-              ),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-            child: ElevatedButton(
-              onPressed: deleteSelectedQuestions,
-              child: Text('삭제'),
-              style: ElevatedButton.styleFrom(
-                primary: Colors.red, // 버튼 색상
-                minimumSize: Size(double.infinity, 50), // 버튼 크기
-              ),
+            padding: EdgeInsets.symmetric(vertical: 8.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: () => setState(() => showAnswers = !showAnswers),
+                  style: ElevatedButton.styleFrom(
+                    primary: Color(0xFFFFFFFF),
+                    onPrimary: Colors.black,
+                    fixedSize: Size(0.8 * MediaQuery.of(context).size.width, 60),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                      side: BorderSide(
+                        color: Color(0xFFC3EAF4),
+                        width: 4.0,
+                      ),
+                    ),
+                  ),
+                  child: Text(
+                    showAnswers ? '답자 가리기' : '답지 보기',
+                    style: TextStyle(fontSize: 15.0),
+                  ),
+                ),
+                SizedBox(height: 16.0),
+                ElevatedButton(
+                  onPressed: () => Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => MakeQuestionPage(documentId: widget.documentId)),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    primary: Color(0xFFFFFFFF),
+                    onPrimary: Colors.black,
+                    fixedSize: Size(0.8 * MediaQuery.of(context).size.width, 60),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                      side: BorderSide(
+                        color: Color(0xFFC3EAF4),
+                        width: 4.0,
+                      ),
+                    ),
+                  ),
+                  child: Text('확인'),
+                ),
+                SizedBox(height: 16.0),
+                ElevatedButton(
+                  onPressed: deleteSelectedQuestions,
+                  style: ElevatedButton.styleFrom(
+                    primary: Color(0xFFFFFFFF),
+                    onPrimary: Colors.black,
+                    fixedSize: Size(0.8 * MediaQuery.of(context).size.width, 60),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                      side: BorderSide(
+                        color: Color(0xFFC3EAF4),
+                        width: 4.0,
+                      ),
+                    ),
+                  ),
+                  child: Text('삭제'),
+                ),
+              ],
             ),
           ),
         ],
       ),
       bottomNavigationBar: CommonBottomNavigationBar(selectedIndex: 1),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => setState(() => showAnswers = !showAnswers),
-        child: Text(showAnswers ? '답자 가리기' : '답지 보기'),
-        backgroundColor: Theme.of(context).primaryColor,
-      ),
     );
+
+
   }
 
 
@@ -131,7 +175,7 @@ class _MultipleChoiceQuestionPageState extends State<MultipleChoiceQuestionPage>
             ),
             title: Text(
               question.title,
-              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
             ),
           ),
           Divider(),

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:pm25/API/APIService.dart';
 import 'package:pm25/NavigationBar/CommonBottomNavigationBar.dart';
 import 'package:pm25/Screen/Send/MakeQuestionPage.dart';
+import 'package:pm25/Screen/SplashScreen_AI.dart';
 
 class SummaryResultPage extends StatefulWidget {
   final int documentId;
@@ -71,41 +72,114 @@ class _SummaryResultPageState extends State<SummaryResultPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Summary Results')),
+      appBar: AppBar(
+        title: Text(
+          '자료 생성 - 문단 요약',
+          style: TextStyle(color: Colors.black),
+        ),
+        backgroundColor: Color(0xFFFFFFFF),
+        iconTheme: IconThemeData(color: Colors.black),
+      ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? SplashScreen_AI()
           : ListView.builder(
         itemCount: contexts.length + 2, // 추가된 두 버튼을 포함
         itemBuilder: (context, index) {
           if (index < contexts.length) {
             var contextItem = contexts[index];
-            return ListTile(
-              title: Text('원본: ${contextItem['content']}'),
-              subtitle: Text('요약본: ${contextItem['summary']}'),
+            return Column(
+              children: [
+                SizedBox(height: 30),
+                TextFormField(
+                  decoration: InputDecoration(
+                    labelText: '원본',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    contentPadding: EdgeInsets.all(12.0),
+                  ),
+                  readOnly: true,
+                  initialValue: contextItem['content'],
+                  maxLines: null,  // null로 설정하면 자동으로 여러 줄 표시됨
+                  textAlign: TextAlign.start,  // 텍스트 정렬 설정 (start는 왼쪽 정렬)
+                ),
+                SizedBox(height: 10),
+                TextFormField(
+                  decoration: InputDecoration(
+                    labelText: '요약본',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    contentPadding: EdgeInsets.all(12.0),
+                  ),
+                  readOnly: true,
+                  initialValue: contextItem['summary'],
+                  maxLines: null,
+                  textAlign: TextAlign.start,
+                ),
+                Divider(), // 간격을 추가하는 Divider 위젯
+              ],
             );
           } else if (index == contexts.length) {
-            return ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        MakeQuestionPage(documentId: widget.documentId),
-                  ),
-                );
-              },
-              child: Text('확인'),
-            );
+            return SizedBox(height: 16); // 간격을 추가하는 SizedBox 위젯
           } else {
-            return ElevatedButton(
-              onPressed: _deleteSummaryResults,
-              child: Text('삭제'),
+            return Column(
+              children: [
+                SizedBox(height: 16), // 간격을 추가하는 SizedBox 위젯
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              MakeQuestionPage(documentId: widget.documentId),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      primary: Color(0xFFFFFFFF),
+                      onPrimary: Colors.black,
+                      minimumSize: Size(0.8 * MediaQuery.of(context).size.width, 60),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
+                        side: BorderSide(
+                          color: Color(0xFFC3EAF4),
+                          width: 4.0,
+                        ),
+                      ),
+                    ),
+                    child: Text('확인'),
+                  ),
+                ),
+                SizedBox(height: 16), // 간격을 추가하는 SizedBox 위젯
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  child: ElevatedButton(
+                    onPressed: _deleteSummaryResults,
+                    style: ElevatedButton.styleFrom(
+                      primary: Color(0xFFFFFFFF),
+                      onPrimary: Colors.black,
+                      minimumSize: Size(0.8 * MediaQuery.of(context).size.width, 60),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
+                        side: BorderSide(
+                          color: Color(0xFFC3EAF4),
+                          width: 4.0,
+                        ),
+                      ),
+                    ),
+                    child: Text('삭제'),
+                  ),
+                ),
+              ],
             );
           }
         },
       ),
       bottomNavigationBar: CommonBottomNavigationBar(selectedIndex: 1),
-
     );
   }
+
 }

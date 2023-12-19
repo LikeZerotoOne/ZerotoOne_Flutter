@@ -40,8 +40,8 @@ dependencies:
   camera: ^0.10.5+6
   image_picker: ^1.0.4
   path: ^1.8.3
+  flutter_svg: 2.0.9
   flutter_local_notifications: ^16.2.0
-
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -68,7 +68,6 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
-
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg
@@ -99,3 +98,27 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+  assets:
+    - assets/imgs/AI.svg
+    - assets/imgs/calender.svg
+    - assets/imgs/my_page.svg
+    - assets/imgs/study_past.svg
+    - assets/imgs/app_logo.svg
+    - assets/imgs/AI_wink.svg
+    - assets/imgs/AI_on_book.svg
+    - assets/imgs/AI_book.gif
+    - assets/imgs/text.svg
+    - assets/imgs/image.svg
+    - assets/imgs/Camera.svg
+    - assets/imgs/AI_jump.gif
+    - assets/imgs/Keyword.svg
+    - assets/imgs/Summary.svg
+    - assets/imgs/Multiple_choice.svg
+    - assets/imgs/Subjective_question.svg
+
+  fonts:
+    - family: Jua
+      fonts:
+        - asset: assets/fonts/Jua-Regular.ttf
+
+

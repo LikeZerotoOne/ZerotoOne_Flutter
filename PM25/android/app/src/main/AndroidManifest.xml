@@ -2,7 +2,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:label="pm25"
+        android:label="스터디 파트너"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

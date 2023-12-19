@@ -33,7 +33,7 @@ class _AddScheduleFormState extends State<AddScheduleForm> {
       if (response == 200) {
         Navigator.pop(context); // 양식 창 닫기
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Schedule added successfully')),
+          SnackBar(content: Text('일정이 성공적으로 추가되었습니다.')),
 
         );
         Navigator.of(context).pushReplacement(
@@ -41,7 +41,7 @@ class _AddScheduleFormState extends State<AddScheduleForm> {
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to add schedule')),
+          SnackBar(content: Text('일정을 추가하는데 실패했습니다.')),
         );
       }
     }
@@ -51,7 +51,12 @@ class _AddScheduleFormState extends State<AddScheduleForm> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add Schedule'),
+        title: Text(
+          '일정 추가하기',
+          style: TextStyle(color: Colors.black),
+        ),
+        backgroundColor: Color(0xFFFFFFFF),
+        iconTheme: IconThemeData(color: Colors.black),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -61,19 +66,21 @@ class _AddScheduleFormState extends State<AddScheduleForm> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
+                SizedBox(height: 50),
                 TextFormField(
-                  decoration: InputDecoration(labelText: 'Schedule Title'),
+                  decoration: InputDecoration(labelText: ' 일정 제목'),
                   onChanged: (value) => setState(() => _scheduleTitle = value),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter schedule title';
+                      return '일정 제목을 입력해주세요.';
                     }
                     return null;
                   },
                 ),
+                SizedBox(height: 50),
                 TextFormField(
                   decoration: InputDecoration(
-                    labelText: 'Schedule Content',
+                    labelText: '일정 내용',
                     border: OutlineInputBorder(), // 테두리 추가
                   ),
                   maxLines: null, // 여러 줄 입력 가능
@@ -81,15 +88,23 @@ class _AddScheduleFormState extends State<AddScheduleForm> {
                   onChanged: (value) => setState(() => _scheduleContent = value),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter schedule content';
+                      return '일정 내용을 입력해주세요';
                     }
                     return null;
                   },
                 )
-                ,SizedBox(height: 20),
+                ,SizedBox(height: 40),
                 ElevatedButton(
                   onPressed: _submitSchedule,
-                  child: Text('Submit'),
+                  child: Text('추가완료'),
+                  style: ElevatedButton.styleFrom(
+                    primary: Color(0xFF226FA9),
+                    onPrimary: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    minimumSize: Size(300, 60),
+                  ),
                 ),
               ],
             ),

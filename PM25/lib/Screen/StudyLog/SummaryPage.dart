@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:pm25/API/APIService.dart';
 import 'package:pm25/NavigationBar/CommonBottomNavigationBar.dart';
+import 'package:pm25/Screen/SplashScreen_Loading.dart';
 
 class SummaryPage extends StatefulWidget {
   final int documentId;
@@ -36,6 +37,7 @@ class _SummaryPageState extends State<SummaryPage> {
       );
     }
   }
+
   void deleteSummary() async {
     var response = await APIService().deleteSummaryResults(widget.documentId);
     if (response.statusCode == 200) {
@@ -54,25 +56,89 @@ class _SummaryPageState extends State<SummaryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Summary'),
+        title: Text(
+          '나의 공부내역 - 문단 요약',
+          style: TextStyle(color: Colors.black),
+        ),
+        backgroundColor: Color(0xFFFFFFFF),
+        iconTheme: IconThemeData(color: Colors.black),
       ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? SplashScreen_Loading()
+          : contexts.isEmpty
+          ? Center(
+        child: Text(
+          '생성된 자료가 없습니다.',
+          style: TextStyle(fontSize: 18.0),
+        ),
+      )
           : ListView.builder(
-        itemCount: contexts.length,
+        itemCount: contexts.length + 1, // 추가된 버튼을 포함
         itemBuilder: (context, index) {
-          var contextItem = contexts[index];
-          return ListTile(
-            title: Text(contextItem['content']),
-            subtitle: Text(contextItem['summary']),
-          );
+          if (index < contexts.length) {
+            var contextItem = contexts[index];
+            return Column(
+              children: [
+                SizedBox(height: 30),
+                TextFormField(
+                  decoration: InputDecoration(
+                    labelText: '원본',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    contentPadding: EdgeInsets.all(12.0),
+                  ),
+                  readOnly: true,
+                  initialValue: contextItem['content'],
+                  maxLines: null,
+                  textAlign: TextAlign.start,
+                ),
+                SizedBox(height: 10),
+                TextFormField(
+                  decoration: InputDecoration(
+                    labelText: '요약본',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    contentPadding: EdgeInsets.all(12.0),
+                  ),
+                  readOnly: true,
+                  initialValue: contextItem['summary'],
+                  maxLines: null,
+                  textAlign: TextAlign.start,
+                ),
+                Divider(),
+              ],
+            );
+          } else {
+            return Column(
+              children: [
+                SizedBox(height: 16),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  child: ElevatedButton(
+                    onPressed: deleteSummary,
+                    style: ElevatedButton.styleFrom(
+                      primary: Color(0xFFFFFFFF),
+                      onPrimary: Colors.black,
+                      minimumSize: Size(0.8 * MediaQuery.of(context).size.width, 60),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
+                        side: BorderSide(
+                          color: Color(0xFFC3EAF4),
+                          width: 4.0,
+                        ),
+                      ),
+                    ),
+                    child: Text('삭제'),
+                  ),
+                ),
+              ],
+            );
+          }
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: deleteSummary,
-        child: Icon(Icons.delete),
-        backgroundColor: Colors.red,
-      ),
+      bottomNavigationBar: CommonBottomNavigationBar(selectedIndex: 0),
     );
   }
 }

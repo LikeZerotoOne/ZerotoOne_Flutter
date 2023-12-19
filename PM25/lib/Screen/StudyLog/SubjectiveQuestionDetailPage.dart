@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:pm25/API/APIService.dart';
 import 'package:pm25/NavigationBar/CommonBottomNavigationBar.dart';
+import 'package:pm25/Screen/SplashScreen_Loading.dart';
 
 class SubjectiveQuestionDetailPage extends StatefulWidget {
   final int documentId;
@@ -57,35 +58,63 @@ class _SubjectiveQuestionDetailPageState extends State<SubjectiveQuestionDetailP
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(title),
+        title: Text('나의 공부내역 - 주관식 문제',
+          style: TextStyle(color: Colors.black),
+        ),
+        backgroundColor: Color(0xFFFFFFFF),
+        iconTheme: IconThemeData(color: Colors.black),
       ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
-          : Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(question, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            SizedBox(height: 20),
-            showAnswer
-                ? Text(answer)
-                : SizedBox.shrink(), // 답이 보이지 않을 때 빈 공간을 표시
-            ElevatedButton(
-              onPressed: () => setState(() => showAnswer = !showAnswer),
-              child: Text(showAnswer ? '답 숨기기' : '답 보기'),
-            ),
-          ],
+          ? Center(child: SplashScreen_Loading())
+          : Center(
+        child: Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(question, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
+              SizedBox(height: 20),
+              showAnswer ? Text(answer) : SizedBox.shrink(),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () => setState(() => showAnswer = !showAnswer),
+                style: ElevatedButton.styleFrom(
+                  primary: Color(0xFFFFFFFF),
+                  onPrimary: Colors.black,
+                  fixedSize: Size(0.8 * MediaQuery.of(context).size.width, 60),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15.0),
+                    side: BorderSide(
+                      color: Color(0xFFC3EAF4),
+                      width: 4.0,
+                    ),
+                  ),
+                ),
+                child: Text(showAnswer ? '답 숨기기' : '답 보기'),
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: deleteQuestion,
+                style: ElevatedButton.styleFrom(
+                  primary: Color(0xFFFFFFFF),
+                  onPrimary: Colors.black,
+                  fixedSize: Size(0.8 * MediaQuery.of(context).size.width, 60),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15.0),
+                    side: BorderSide(
+                      color: Color(0xFFC3EAF4),
+                      width: 4.0,
+                    ),
+                  ),
+                ),
+                child: Text('삭제'),
+              ),
+            ],
+          ),
         ),
-
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: deleteQuestion,
-        child: Icon(Icons.delete),
-        backgroundColor: Colors.red,
       ),
       bottomNavigationBar: CommonBottomNavigationBar(selectedIndex: 0),
-
     );
   }
 }

@@ -15,7 +15,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 
 class APIService {
-  final String _baseUrl = 'http://192.9.12.155:8080';
+  final String _baseUrl = 'http://ceprj.gachon.ac.kr:60025';
 
   Future<http.Response> signUp(User user) {
     return http.post(
@@ -633,6 +633,5 @@ class APIService {
       // 필요한 헤더 추가
     });
   }
-
 }
 

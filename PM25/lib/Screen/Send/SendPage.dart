@@ -5,6 +5,8 @@ import 'package:pm25/Screen/Member/LoginScreen.dart';
 import 'package:pm25/Screen/Send/SendImagePage.dart';
 import 'package:pm25/Storage/StorageUtil.dart';
 import 'package:pm25/Screen/Send/SendTextPage.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:pm25/Screen/SplashScreen_Loading.dart';
 
 class SendPage extends StatefulWidget {
   @override
@@ -13,6 +15,7 @@ class SendPage extends StatefulWidget {
 
 class _SendPageState extends State<SendPage> {
   bool isAuthenticated = false;
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -26,9 +29,9 @@ class _SendPageState extends State<SendPage> {
     if (result) {
       setState(() {
         isAuthenticated = true;
+        isLoading = false;
       });
-    }
-    else{
+    } else {
       // initState에서 Navigator 호출 시 문제 발생을 피하기 위해
       WidgetsBinding.instance.addPostFrameCallback((_) {
         Navigator.of(context).pushReplacement(
@@ -40,36 +43,92 @@ class _SendPageState extends State<SendPage> {
 
   @override
   Widget build(BuildContext context) {
-    // build 내부에서 Navigator를 직접 호출하는 대신, 상태에 따라 화면을 결정
-    if (!isAuthenticated) {
+    if (isLoading) {
+      return SplashScreen_Loading();
+    } else if (!isAuthenticated) {
       return LoginScreen();
     }
 
-    // 인증된 사용자에 대한 UI 렌더링
+
+// 인증된 사용자에 대한 UI 렌더링
     return Scaffold(
-      appBar: AppBar(title: Text('Send Page')),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => SendTextPage()),
-              );
-            },
-            child: Text('텍스트'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => SendImagePage()),
-              );
-            },
-            child: Text('이미지'),
-          ),
-        ],
+      appBar: AppBar(
+        title: Text(
+          '자료 생성',
+          style: TextStyle(color: Colors.black),
+        ),
+        backgroundColor: Color(0xFFFFFFFF),
+        iconTheme: IconThemeData(color: Colors.black),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              "원하시는 학습자료를 만들기 위해 하나를 선택해 주세요!",
+              style: TextStyle(
+                fontSize: 18.0,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            SizedBox(height: 60),
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SendTextPage()),
+                );
+              },
+              icon: SvgPicture.asset(
+                'assets/imgs/text.svg',
+                width: 100,
+                height: 100,
+              ),
+              label: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  '텍스트',
+                  style: TextStyle(fontSize: 25.0),
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                primary: Color(0xFFFFFFFF),
+                onPrimary: Colors.black,
+                fixedSize: Size(MediaQuery.of(context).size.width, 150),
+                padding: EdgeInsets.all(16.0),
+                side: BorderSide.none,
+              ),
+            ),
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SendImagePage()),
+                );
+              },
+              icon: SvgPicture.asset(
+                'assets/imgs/image.svg',
+                width: 100,
+                height: 100,
+              ),
+              label: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  '이미지',
+                  style: TextStyle(fontSize: 25.0),
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                primary: Color(0xFFFFFFFF),
+                onPrimary: Colors.black,
+                fixedSize: Size(MediaQuery.of(context).size.width, 150),
+                padding: EdgeInsets.all(16.0),
+                side: BorderSide.none,
+              ),
+            ),
+
+          ],
+        ),
       ),
       bottomNavigationBar: CommonBottomNavigationBar(selectedIndex: 1),
     );

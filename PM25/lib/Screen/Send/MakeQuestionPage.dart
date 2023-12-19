@@ -7,6 +7,8 @@ import 'package:pm25/Screen/Send/Keywords/KeywordResultPage.dart';
 import 'package:pm25/Screen/Send/MultipleChoice/MultipleChoiceQuestionPage.dart';
 import 'package:pm25/Screen/Send/Subjective/NewSubjectiveQuestionResultPage.dart';
 import 'package:pm25/Screen/Send/Summary/SummaryResultPage.dart';
+import 'package:pm25/Screen/SplashScreen_AI.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class MakeQuestionPage extends StatefulWidget {
   final int documentId;
@@ -45,13 +47,8 @@ class _MakeQuestionPageState extends State<MakeQuestionPage> {
           builder: (context) => KeywordResultPage(documentId: receivedDocumentId),
         ),
       );
-    } else if (response.statusCode == 500) {
-      // 네트워크 오류 처리
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('네트워크 오류입니다. 재시도 해주세요.')),
-      );
     } else {
-      // 기타 오류 처리
+      // 오류 처리
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('키워드 추출 실패')),
       );
@@ -75,12 +72,7 @@ class _MakeQuestionPageState extends State<MakeQuestionPage> {
           builder: (context) => SummaryResultPage(documentId: widget.documentId),
         ),
       );
-    } else if (response.statusCode == 500) {
-      // 네트워크 오류 처리
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('네트워크 오류입니다. 재시도 해주세요.')),
-      );
-    }else {
+    } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('문단 요약 실패')),
       );
@@ -110,11 +102,6 @@ class _MakeQuestionPageState extends State<MakeQuestionPage> {
         MaterialPageRoute(
           builder: (context) => MultipleChoiceQuestionPage(documentId: documentId, multipleIds: multipleIds),
         ),
-      );
-    }else if (response.statusCode == 500) {
-      // 네트워크 오류 처리
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('네트워크 오류입니다. 재시도 해주세요.')),
       );
     } else {
       // 오류 처리
@@ -147,12 +134,7 @@ class _MakeQuestionPageState extends State<MakeQuestionPage> {
           builder: (context) => NewSubjectiveQuestionResultPage(documentId: documentId, writtenIds: writtenIds),
         ),
       );
-    } else if (response.statusCode == 500) {
-      // 네트워크 오류 처리
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('네트워크 오류입니다. 재시도 해주세요.')),
-      );
-    }else {
+    } else {
       // 오류 처리
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('주관식 문제 생성 실패')),
@@ -164,29 +146,144 @@ class _MakeQuestionPageState extends State<MakeQuestionPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Make Questions'),
+        title: Text(
+          '자료 생성',
+          style: TextStyle(color: Colors.black),
+        ),
+        backgroundColor: Color(0xFFFFFFFF),
+        iconTheme: IconThemeData(color: Colors.black),
       ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator()) // 로딩 중인 경우
+          ? SplashScreen_AI() // 로딩 중인 경우
           : Center( // 로딩이 끝난 경우
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            ElevatedButton(
+            SizedBox(height: 40),
+            Text(
+              "무엇을 도와드릴까요?",
+              style: TextStyle(
+                fontSize: 18.0,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            SizedBox(height: 40),
+            ElevatedButton.icon(
               onPressed: extractKeywords,
-              child: Text('키워드 추출'),
+              icon: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SvgPicture.asset(
+                    'assets/imgs/Keyword.svg',
+                    width: 100,
+                    height: 100,
+                  ),
+                  SizedBox(width: 70), // 아이콘과 라벨 사이에 일정한 간격을 두기 위해 여백을 추가합니다.
+                ],
+              ),
+              label: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  '키워드 추출',
+                  style: TextStyle(fontSize: 20.0),
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                primary: Color(0xFFFFFFFF),
+                onPrimary: Colors.black,
+                fixedSize: Size(MediaQuery.of(context).size.width, 100),
+                padding: EdgeInsets.all(16.0),
+                side: BorderSide.none,
+              ),
             ),
-            ElevatedButton(
+
+            ElevatedButton.icon(
               onPressed: summarizeParagraph,
-              child: Text('문단 요약'),
+              icon: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SvgPicture.asset(
+                    'assets/imgs/Summary.svg',
+                    width: 110,
+                    height: 110,
+                  ),
+                  SizedBox(width: 70),
+                ],
+              ),
+              label: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  '문단 요약',
+                  style: TextStyle(fontSize: 20.0),
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                primary: Color(0xFFFFFFFF),
+                onPrimary: Colors.black,
+                fixedSize: Size(MediaQuery.of(context).size.width, 100),
+                padding: EdgeInsets.all(16.0),
+                side: BorderSide.none,
+              ),
             ),
-            ElevatedButton(
+
+            ElevatedButton.icon(
               onPressed: createMultipleChoiceQuestions,
-              child: Text('객관식 문제'),
+              icon: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SvgPicture.asset(
+                    'assets/imgs/Multiple_choice.svg',
+                    width: 100,
+                    height: 100,
+                  ),
+                  SizedBox(width: 30),
+                ],
+              ),
+              label: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  '  객관식 문제 생성',
+                  style: TextStyle(fontSize: 20.0),
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                primary: Color(0xFFFFFFFF),
+                onPrimary: Colors.black,
+                fixedSize: Size(MediaQuery.of(context).size.width, 100),
+                padding: EdgeInsets.all(16.0),
+                side: BorderSide.none,
+              ),
             ),
-            ElevatedButton(
+            ElevatedButton.icon(
               onPressed: createSubjectiveQuestions,
-              child: Text('주관식 문제'),
+              icon: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SvgPicture.asset(
+                    'assets/imgs/Subjective_question.svg',
+                    width: 100,
+                    height: 100,
+                  ),SizedBox(width: 30),
+                ],
+              ),
+              label: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  '  주관식 문제 생성',
+                  style: TextStyle(fontSize: 20.0),
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                primary: Color(0xFFFFFFFF),
+                onPrimary: Colors.black,
+                fixedSize: Size(MediaQuery.of(context).size.width, 100),
+                padding: EdgeInsets.all(16.0),
+                side: BorderSide.none,
+              ),
             ),
           ],
         ),

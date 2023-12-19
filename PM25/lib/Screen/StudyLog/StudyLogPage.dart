@@ -5,6 +5,7 @@ import 'package:pm25/NavigationBar/CommonBottomNavigationBar.dart';
 import 'package:pm25/Screen/StudyLog/DocumentDetailsPage.dart';
 import 'package:pm25/Storage/StorageUtil.dart';
 import 'dart:convert';
+import 'package:pm25/Screen/SplashScreen_Loading.dart';
 
 class StudyLogPage extends StatefulWidget {
   @override
@@ -38,6 +39,7 @@ class _StudyLogPageState extends State<StudyLogPage> {
       );
     }
   }
+
   void deleteDocument(int documentId) async {
     var response = await APIService().deleteDocument(documentId);
     if (response.statusCode == 200) {
@@ -54,42 +56,84 @@ class _StudyLogPageState extends State<StudyLogPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Study Log")),
-      body: isLoading
-          ? Center(child: CircularProgressIndicator())
-          : ListView.builder(
-          itemCount: documents.length,
-        itemBuilder: (context, index) {
-          var document = documents[index];
-          var documentCreated = DateTime(
-            document['documentCreated'][0],
-            document['documentCreated'][1],
-            document['documentCreated'][2],
-          );
-          String formattedDate = DateFormat('yyyy-MM-dd').format(
-              documentCreated); // 날짜 포맷 변경
-
-          return ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => DocumentDetailsPage(documentId: document['documentId']),
+      body: Stack(
+        children: [
+          if (isLoading) SplashScreen_Loading(),
+          if (!isLoading)
+            Column(
+              children: [
+                AppBar(
+                  title: Text(
+                    '나의 공부내역',
+                    style: TextStyle(color: Colors.black),
+                  ),
+                  backgroundColor: Color(0xFFFFFFFF),
+                  iconTheme: IconThemeData(color: Colors.black),
                 ),
-              );
-            },
-            child:ListTile(
-            title: Text(document['documentTitle']),
-          subtitle: Text('생성일자: $formattedDate'),
-          trailing: IconButton(
-          icon: Icon(Icons.delete),
-          onPressed: () => deleteDocument(document['documentId']),
-          ),
-          )
-          );
-        },
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: documents.length,
+                    itemBuilder: (context, index) {
+                      var document = documents[index];
+                      var documentCreated = DateTime(
+                        document['documentCreated'][0],
+                        document['documentCreated'][1],
+                        document['documentCreated'][2],
+                      );
+                      String formattedDate = DateFormat('yyyy-MM-dd').format(
+                          documentCreated); // 날짜 포맷 변경
+
+                      return ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  DocumentDetailsPage(documentId: document['documentId']),
+                            ),
+                          );
+                        },
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                                (Set<MaterialState> states) {
+                              // 버튼이 눌린 상태일 때 색상 변경
+                              if (states.contains(MaterialState.pressed)) {
+                                return Colors.grey; // 원하는 색상으로 변경 가능
+                              }
+                              // 기본 색상 반환
+                              return Colors.white;
+                            },
+                          ),
+                        ),
+                        child: ListTile(
+                          title: Text(
+                            document['documentTitle'],
+                            style: TextStyle(
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          subtitle: Text(
+                            '생성일자 : $formattedDate',
+                            style: TextStyle(
+                              fontSize: 16.0,
+                            ),
+                          ),
+                          trailing: IconButton(
+                            icon: Icon(Icons.delete),
+                            onPressed: () => deleteDocument(document['documentId']),
+                          ),
+                        ),
+                      );
+
+                    },
+                  ),
+                ),
+                CommonBottomNavigationBar(selectedIndex: 0),
+              ],
+            ),
+        ],
       ),
-      bottomNavigationBar: CommonBottomNavigationBar(selectedIndex: 0),
     );
   }
 }

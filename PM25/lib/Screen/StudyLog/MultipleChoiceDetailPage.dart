@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:pm25/API/APIService.dart';
+import 'package:pm25/Screen/SplashScreen_Loading.dart';
+import 'package:pm25/NavigationBar/CommonBottomNavigationBar.dart';
 
 class MultipleChoiceDetailPage extends StatefulWidget {
   final int documentId;
@@ -53,45 +55,74 @@ class _MultipleChoiceDetailPageState extends State<MultipleChoiceDetailPage> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Multiple Choice Detail'),
+        title: Text('나의 공부내역 - 객관식 문제',
+          style: TextStyle(color: Colors.black),
+        ),
+        backgroundColor: Color(0xFFFFFFFF),
+        iconTheme: IconThemeData(color: Colors.black),
       ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
-          : Column(
-        children: [
-          Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Text(question,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-          ),
-          Divider(),
-          ...multipleChoices.map((choice) =>
-              ListTile(
-                title: Text(
-                  '${choice['number']}. ${choice['content']}',
-                  style: TextStyle(
-                    color: showAnswer && choice['answer'] ? Colors.blue : null,
+          ? Center(child: SplashScreen_Loading())
+          : SingleChildScrollView(
+        child: Column(
+          children: [
+            SizedBox(height: 50),
+            Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Text(question,
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
+            ),
+            Divider(),
+            ...multipleChoices.map((choice) =>
+                ListTile(
+                  title: Text(
+                    '${choice['number']}. ${choice['content']}',
+                    style: TextStyle(
+                      color: showAnswer && choice['answer'] ? Colors.blue : null,
+                    ),
+                  ),
+                )).toList(),
+            ElevatedButton(
+              onPressed: () => setState(() => showAnswer = !showAnswer),
+              style: ElevatedButton.styleFrom(
+                primary: Color(0xFFFFFFFF),
+                onPrimary: Colors.black,
+                fixedSize: Size(0.8 * MediaQuery.of(context).size.width, 60),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                  side: BorderSide(
+                    color: Color(0xFFC3EAF4),
+                    width: 4.0,
                   ),
                 ),
-              )).toList(),
-          ElevatedButton(
-            onPressed: () => setState(() => showAnswer = !showAnswer),
-            child: Text(showAnswer ? '답지 숨기기' : '답지 보기'),
-          ),
-          ElevatedButton(
-            onPressed: deleteMultipleChoiceQuestion,
-            child: Text('삭제'),
-            style: ElevatedButton.styleFrom(primary: Colors.red),
-          ),
-        ],
+              ),
+              child: Text(showAnswer ? '답지 숨기기' : '답지 보기'),
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: deleteMultipleChoiceQuestion,
+              style: ElevatedButton.styleFrom(
+                primary: Color(0xFFFFFFFF),
+                onPrimary: Colors.black,
+                fixedSize: Size(0.8 * MediaQuery.of(context).size.width, 60),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                  side: BorderSide(
+                    color: Color(0xFFC3EAF4),
+                    width: 4.0,
+                  ),
+                ),
+              ),
+              child: Text('삭제'),
+            ),
+          ],
+        ),
       ),
+      bottomNavigationBar: CommonBottomNavigationBar(selectedIndex: 0),
     );
   }
-
-
 }

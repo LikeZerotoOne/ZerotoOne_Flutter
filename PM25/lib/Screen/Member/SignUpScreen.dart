@@ -65,74 +65,133 @@ class _SignUpScreenState extends State<SignUpScreen> {
     }
   }
 
-
-
-
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('회원가입'),
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              Row(
-                children: <Widget>[
-                  Expanded(
-                    child: TextField(
-                      controller: _usernameController,
-                      decoration: InputDecoration(
-                        labelText: 'Username',
+    Widget build(BuildContext context) {
+      double textFieldWidth = MediaQuery
+          .of(context)
+          .size
+          .width * 0.7;
+
+      return Scaffold(
+        appBar: AppBar(
+          title: Text(
+            '회원가입',
+            style: TextStyle(color: Colors.black),
+          ),
+          backgroundColor: Color(0xFFFFFFFF),
+          iconTheme: IconThemeData(color: Colors.black),
+        ),
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start, // 이 부분을 추가하여 왼쪽 정렬
+              children: [
+                SizedBox(height: 40),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        controller: _usernameController,
+                        decoration: InputDecoration(
+                          labelText: '아이디: ',
+                          hintText: '아이디를 입력하세요',
+                          prefixIcon: Icon(Icons.person_4),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    ElevatedButton(
+                      onPressed: () =>
+                          _usernameChecker.checkUsername(_usernameController.text, context),
+                      child: Text('중복 확인'),
+                      style: ElevatedButton.styleFrom(
+                        primary: Color(0xFF226FA9),
+                        onPrimary: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        minimumSize: Size(60, 60), // 버튼의 최소 크기를 설정
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 20),
+                Container(
+                  width: textFieldWidth,
+                  child: TextFormField(
+                    controller: _passwordController,
+                    decoration: InputDecoration(
+                      labelText: '비밀번호: ',
+                      hintText: '비밀번호를 입력하세요',
+                      prefixIcon: Icon(Icons.lock),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ),
+                    obscureText: true,
+                  ),
+                ),
+                SizedBox(height: 20),
+                Container(
+                  width: textFieldWidth,
+                  child: TextFormField(
+                    controller: _nameController,
+                    decoration: InputDecoration(
+                      labelText: '이름: ',
+                      hintText: '이름을 입력하세요',
+                      prefixIcon: Icon(Icons.person_2),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
                       ),
                     ),
                   ),
-                  ElevatedButton(
-                    onPressed: () => _usernameChecker.checkUsername(
-                        _usernameController.text, context),
-                    child: Text('중복 확인'),
+                ),
+                SizedBox(height: 20),
+                Container(
+                  width: textFieldWidth,
+                  child: TextFormField(
+                    controller: _emailController,
+                    decoration: InputDecoration(
+                      labelText: '이메일: ',
+                      hintText: '이메일을 입력하세요',
+                      prefixIcon: Icon(Icons.email),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ),
                   ),
-                ],
-              ),
-              TextField(
-                controller: _usernameController,
-                decoration: InputDecoration(
-                  labelText: 'Username',
                 ),
-              ),
-              TextField(
-                controller: _passwordController,
-                decoration: InputDecoration(
-                  labelText: 'Password',
+                SizedBox(height: 80),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center, // 가운데 정렬
+                  children: [
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.7, // 원하는 너비로 설정
+                      child: ElevatedButton(
+                        onPressed: _signUp,
+                        child: Text('가입하기'),
+                        style: ElevatedButton.styleFrom(
+                          primary: Color(0xFF226FA9),
+                          onPrimary: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          elevation: 5.0,
+                          minimumSize: Size(double.infinity, 50), // 최소 크기를 설정
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                obscureText: true,
-              ),
-              TextField(
-                controller: _nameController,
-                decoration: InputDecoration(
-                  labelText: 'Name',
-                ),
-              ),
-              TextField(
-                controller: _emailController,
-                decoration: InputDecoration(
-                  labelText: 'Email',
-                ),
-              ),
-
-              ElevatedButton(
-                onPressed: _signUp,
-                child: Text('회원가입'),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
-      ),
-    );
+      );
   }
-
-
-
 }
